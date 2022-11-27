@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Контексто</title>
+    </head>
+    <body>
+        <form method="post">
+            {% csrf_token %}
+            <textarea name="input_word" placeholder="Введите слово"></textarea>
+            <input id="button" type="submit" value="Проверить">
+        </form>
+        <br>
+        <br>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        <br>
+        {{ pair_for_asked }}
+        <br><br><br><br>
+
+        {{ secret_word }}<br><br>
+        {% for word in top_5 %}
+            {{ word }}<br>
+        {% endfor %}
+    </body>
+</html>
