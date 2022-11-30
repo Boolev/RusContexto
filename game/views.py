@@ -21,6 +21,15 @@ random_index = randrange(guess_words_length)
 secret_word = words4guess[random_index]
 
 
+def get_indexes(user_guesses_):
+    indexes = []
+
+    for pair in user_guesses_:
+        indexes.append(pair[1])
+
+    return indexes
+
+
 def index(request):
 
     global user_guesses
@@ -39,7 +48,7 @@ def index(request):
             for pair in similarity_matrix[secret_word]:
                 if input_word in pair:
                     if pair in user_guesses:
-                        messages.warning(request, f'Слово {input_word} уже вводилось ранее')
+                        messages.warning(request, f'Рейтинг слова {input_word} уже известен')
                         found = True
                         break
                     else:
@@ -47,6 +56,7 @@ def index(request):
                             messages.warning(request, 'Вы отгадали слово. Можете продолжать эксперименты')
                         context['pair_for_asked'] = pair
                         user_guesses.append(pair)
+                        user_guesses = sorted(user_guesses, key=lambda x: x[1])
                         found = True
 
             if not found:
@@ -63,6 +73,31 @@ def index(request):
             random_index = randrange(guess_words_length)
             secret_word = words4guess[random_index]
 
-    context['user_guesses'] = sorted(user_guesses, key=lambda x: x[1])
+        elif 'give_hint' in request.POST:
+
+            if not user_guesses:
+                user_guesses.append(similarity_matrix[secret_word][1])
+
+            elif user_guesses[0][1] == 1:
+                messages.warning(request, 'Слово уже отгадано')
+
+            else:
+                for i in range(2, 50000):
+                    print(i)
+                    if i in get_indexes(user_guesses):
+                        continue
+
+                    placed = False
+                    for pair in similarity_matrix[secret_word]:
+                        if pair[1] == i:
+                            user_guesses.append(pair)
+                            user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                            placed = True
+                            break
+
+                    if placed:
+                        break
+
+    context['user_guesses'] = user_guesses
 
     return render(request, 'game/index.html', context)

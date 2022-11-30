@@ -20,6 +20,11 @@
             <input type="submit" name="start_new_game_button" value="Начать новую игру">
         </form>
 
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="give_hint" value="Подсказка">
+        </form>
+
         {% for message in messages %}
             {{ message }}
         {% endfor %}
