@@ -23,25 +23,32 @@ secret_word = words4guess[random_index]
 
 def index(request):
     context = {}
-    context['secret_word'] = secret_word
+
 
     if request.method == 'POST':
-        input_word = request.POST.get('input_word')
 
-        found = False
-        for pair in similarity_matrix[secret_word]:
-            if input_word in pair:
-                if pair in user_guesses:
-                    messages.warning(request, f'Слово {input_word} уже вводилось ранее')
-                    found = True
-                    break
-                else:
-                    context['pair_for_asked'] = pair
-                    user_guesses.append(pair)
-                    found = True
+        if 'check_word_button' in request.POST:
 
-        if not found:
-            messages.warning(request, 'Неизвестное слово')
+            input_word = request.POST.get('input_word')
+
+            found = False
+            for pair in similarity_matrix[secret_word]:
+                if input_word in pair:
+                    if pair in user_guesses:
+                        messages.warning(request, f'Слово {input_word} уже вводилось ранее')
+                        found = True
+                        break
+                    else:
+                        context['pair_for_asked'] = pair
+                        user_guesses.append(pair)
+                        found = True
+
+            if not found:
+                messages.warning(request, 'Неизвестное слово')
+
+        elif 'show_answer_button' in request.POST:
+
+            context['secret_word'] = secret_word
 
     context['user_guesses'] = sorted(user_guesses, key=lambda x: x[1])
 

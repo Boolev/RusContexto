@@ -6,14 +6,27 @@
     <body>
         <form method="post">
             {% csrf_token %}
-            <textarea name="input_word" placeholder="Введите слово"></textarea>
-            <input id="button" type="submit" value="Проверить">
+            <input type="text" name="input_word" placeholder="Введите слово">
+            <input type="submit" name="check_word_button" value="Проверить">
+        </form>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="show_answer_button" value="Показать секретное слово">
         </form>
 
         {% for message in messages %}
             {{ message }}
         {% endfor %}
         <br><br>
+
+
+        {% if secret_word %}
+            Секретное слово - {{ secret_word }}
+        {% endif %}
+        <br><br>
+
+
         {{ pair_for_asked }}
         <br><br>
         {% for pair in user_guesses %}
