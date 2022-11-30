@@ -15,6 +15,11 @@
             <input type="submit" name="show_answer_button" value="Показать секретное слово">
         </form>
 
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="start_new_game_button" value="Начать новую игру">
+        </form>
+
         {% for message in messages %}
             {{ message }}
         {% endfor %}

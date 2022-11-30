@@ -22,8 +22,12 @@ secret_word = words4guess[random_index]
 
 
 def index(request):
-    context = {}
 
+    global user_guesses
+    global random_index
+    global secret_word
+
+    context = {}
 
     if request.method == 'POST':
 
@@ -49,6 +53,13 @@ def index(request):
         elif 'show_answer_button' in request.POST:
 
             context['secret_word'] = secret_word
+
+        elif 'start_new_game_button' in request.POST:
+
+            user_guesses = []
+
+            random_index = randrange(guess_words_length)
+            secret_word = words4guess[random_index]
 
     context['user_guesses'] = sorted(user_guesses, key=lambda x: x[1])
 
