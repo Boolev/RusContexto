@@ -25,6 +25,15 @@
             <input type="submit" name="give_hint_button" value="Подсказка">
         </form>
 
+        {% if is_victory %}
+            <br>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" name="show_top_100_closest" value="Показать ближайшие 100 слов">
+            </form>
+        {% endif %}
+
+
         {% for message in messages %}
             {{ message }}
         {% endfor %}

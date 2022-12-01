@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
+from django.shortcuts import redirect
 import pickle
 from random import randrange
 from math import ceil
@@ -29,6 +30,8 @@ user_guesses = []
 random_index = randrange(guess_words_length)
 secret_word = words4guess[random_index]
 
+is_victory = False
+
 
 def get_indexes(user_guesses_):
     indexes = []
@@ -44,6 +47,7 @@ def index(request):
     global user_guesses
     global random_index
     global secret_word
+    global is_victory
 
     context = {}
 
@@ -69,6 +73,7 @@ def index(request):
                         else:
                             if pair[1] == 1:
                                 messages.warning(request, 'Вы отгадали слово. Можете продолжать эксперименты')
+                                is_victory = True
                             context['pair_for_asked'] = pair
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
@@ -84,6 +89,7 @@ def index(request):
         elif 'start_new_game_button' in request.POST:
 
             user_guesses = []
+            is_victory = False
 
             random_index = randrange(guess_words_length)
             secret_word = words4guess[random_index]
@@ -121,7 +127,18 @@ def index(request):
                         user_guesses = sorted(user_guesses, key=lambda x: x[1])
                         break
 
+        elif 'show_top_100_closest' in request.POST:
+
+            top_100 = similarity_matrix[secret_word][:100]
+            local_context = {'top_100': top_100}
+
+            return render(request, 'game/top_100.html', local_context)
+
+        elif 'get_to_home_button' in request.POST:
+
+            redirect('index')
 
     context['user_guesses'] = user_guesses
+    context['is_victory'] = is_victory
 
     return render(request, 'game/index.html', context)
