@@ -5,6 +5,11 @@ from random import randrange
 from math import ceil
 from pymorphy2 import MorphAnalyzer
 
+import nltk
+nltk.download("stopwords")
+from nltk.corpus import stopwords
+stop_words = stopwords.words("russian")
+
 
 morph = MorphAnalyzer()
 
@@ -47,25 +52,30 @@ def index(request):
         if 'check_word_button' in request.POST:
 
             input_word = request.POST.get('input_word')
-            lemmatized = morph.parse(input_word)[0].normal_form
 
-            found = False
-            for pair in similarity_matrix[secret_word]:
-                if lemmatized in pair:
-                    if pair in user_guesses:
-                        messages.warning(request, f'Рейтинг слова {lemmatized} уже известен')
-                        found = True
-                        break
-                    else:
-                        if pair[1] == 1:
-                            messages.warning(request, 'Вы отгадали слово. Можете продолжать эксперименты')
-                        context['pair_for_asked'] = pair
-                        user_guesses.append(pair)
-                        user_guesses = sorted(user_guesses, key=lambda x: x[1])
-                        found = True
+            if input_word in stop_words:
+                messages.warning(request, 'В этом слове мало смысла')
 
-            if not found:
-                messages.warning(request, 'Неизвестное слово')
+            else:
+                lemmatized = morph.parse(input_word)[0].normal_form
+
+                found = False
+                for pair in similarity_matrix[secret_word]:
+                    if lemmatized in pair:
+                        if pair in user_guesses:
+                            messages.warning(request, f'Рейтинг слова {lemmatized} уже известен')
+                            found = True
+                            break
+                        else:
+                            if pair[1] == 1:
+                                messages.warning(request, 'Вы отгадали слово. Можете продолжать эксперименты')
+                            context['pair_for_asked'] = pair
+                            user_guesses.append(pair)
+                            user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                            found = True
+
+                if not found:
+                    messages.warning(request, 'Неизвестное слово')
 
         elif 'show_answer_button' in request.POST:
 
