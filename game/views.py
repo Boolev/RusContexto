@@ -84,6 +84,8 @@ def index(request):
 
         elif 'show_answer_button' in request.POST:
 
+            user_guesses.append(similarity_matrix[secret_word][0])
+            user_guesses = sorted(user_guesses, key=lambda x: x[1])
             context['secret_word'] = secret_word
 
         elif 'start_new_game_button' in request.POST:
@@ -97,7 +99,7 @@ def index(request):
         elif 'give_hint_button' in request.POST:
 
             if not user_guesses:
-                user_guesses.append(similarity_matrix[secret_word][1])
+                messages.warning(request, 'Сделайте хотя бы одно предположение')
 
             elif user_guesses[0][1] == 1:
                 messages.warning(request, 'Слово уже отгадано')
