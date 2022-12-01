@@ -3,7 +3,10 @@ from django.contrib import messages
 import pickle
 from random import randrange
 from math import ceil
+from pymorphy2 import MorphAnalyzer
 
+
+morph = MorphAnalyzer()
 
 with open('game/game_files/cleaned_all_words.pickle', 'rb') as handle:
     all_words = pickle.load(handle)
@@ -44,12 +47,13 @@ def index(request):
         if 'check_word_button' in request.POST:
 
             input_word = request.POST.get('input_word')
+            lemmatized = morph.parse(input_word)[0].normal_form
 
             found = False
             for pair in similarity_matrix[secret_word]:
-                if input_word in pair:
+                if lemmatized in pair:
                     if pair in user_guesses:
-                        messages.warning(request, f'Рейтинг слова {input_word} уже известен')
+                        messages.warning(request, f'Рейтинг слова {lemmatized} уже известен')
                         found = True
                         break
                     else:
