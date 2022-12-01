@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 import pickle
 from random import randrange
+from math import ceil
 
 
 with open('game/game_files/cleaned_all_words.pickle', 'rb') as handle:
@@ -73,7 +74,7 @@ def index(request):
             random_index = randrange(guess_words_length)
             secret_word = words4guess[random_index]
 
-        elif 'give_hint' in request.POST:
+        elif 'give_hint_button' in request.POST:
 
             if not user_guesses:
                 user_guesses.append(similarity_matrix[secret_word][1])
@@ -81,9 +82,8 @@ def index(request):
             elif user_guesses[0][1] == 1:
                 messages.warning(request, 'Слово уже отгадано')
 
-            else:
-                for i in range(2, 50000):
-                    print(i)
+            elif get_indexes(user_guesses)[0] == 2:
+                for i in range(3, 50000):
                     if i in get_indexes(user_guesses):
                         continue
 
@@ -97,6 +97,16 @@ def index(request):
 
                     if placed:
                         break
+            else:
+                top_guess = get_indexes(user_guesses)[0]
+                need_to_place = ceil(top_guess / 2)
+
+                for pair in similarity_matrix[secret_word]:
+                    if pair[1] == need_to_place:
+                        user_guesses.append(pair)
+                        user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                        break
+
 
     context['user_guesses'] = user_guesses
 
