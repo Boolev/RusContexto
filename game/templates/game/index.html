@@ -2,6 +2,13 @@
 <html>
     <head>
         <title>Контексто</title>
+        <style>
+            body {
+                  margin: auto;
+                  width: 50%;
+                  padding: 10px;
+            }
+        </style>
     </head>
     <body>
         <form method="post">
@@ -37,11 +44,10 @@
         {% for message in messages %}
             <br>{{ message }}
         {% endfor %}
-        <br><br>
 
 
         {% if secret_word %}
-            Секретное слово - {{ secret_word }}
+            <br>Секретное слово - {{ secret_word }}
         {% endif %}
         <br><br>
 

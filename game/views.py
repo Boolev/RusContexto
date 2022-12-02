@@ -2,35 +2,35 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
 import pickle
-from random import randrange
+from random import sample
 from math import ceil
 from pymorphy2 import MorphAnalyzer
-
-import nltk
-nltk.download("stopwords")
-from nltk.corpus import stopwords
-stop_words = stopwords.words("russian")
+from .utils import get_sorted_similarities
+from .utils import stop_words
+from .utils import words4guess
+from .utils import all_words
 
 
 morph = MorphAnalyzer()
 
-with open('game/game_files/cleaned_all_words.pickle', 'rb') as handle:
-    all_words = pickle.load(handle)
-
-with open('game/game_files/similarity_matrix.pickle', 'rb') as handle:
-    similarity_matrix = pickle.load(handle)
-
-with open('game/game_files/words4guess.pickle', 'rb') as handle:
-    words4guess = pickle.load(handle)  
-
-guess_words_length = len(words4guess)
-
+secret_word = sample(words4guess, 1)[0]
 user_guesses = []
-
-random_index = randrange(guess_words_length)
-secret_word = words4guess[random_index]
-
+similarities = get_sorted_similarities(secret_word)
 is_victory = False
+
+
+def reinitialize_game():
+    global user_guesses
+    global secret_word
+    global similarities
+    global is_victory
+
+    secret_word = sample(words4guess, 1)[0]
+    user_guesses = []
+    similarities = get_sorted_similarities(secret_word)
+    is_victory = False
+
+    return
 
 
 def get_indexes(user_guesses_):
@@ -45,8 +45,8 @@ def get_indexes(user_guesses_):
 def index(request):
 
     global user_guesses
-    global random_index
     global secret_word
+    global similarities
     global is_victory
 
     context = {}
@@ -64,7 +64,7 @@ def index(request):
                 lemmatized = morph.parse(input_word)[0].normal_form
 
                 found = False
-                for pair in similarity_matrix[secret_word]:
+                for pair in similarities:
                     if lemmatized in pair:
                         if pair in user_guesses:
                             messages.warning(request, f'Рейтинг слова {lemmatized} уже известен')
@@ -84,17 +84,15 @@ def index(request):
 
         elif 'show_answer_button' in request.POST:
 
-            user_guesses.append(similarity_matrix[secret_word][0])
+            user_guesses.append(similarities[0])
             user_guesses = sorted(user_guesses, key=lambda x: x[1])
+            is_victory = True
+
             context['secret_word'] = secret_word
 
         elif 'start_new_game_button' in request.POST:
 
-            user_guesses = []
-            is_victory = False
-
-            random_index = randrange(guess_words_length)
-            secret_word = words4guess[random_index]
+            reinitialize_game()
 
         elif 'give_hint_button' in request.POST:
 
@@ -104,13 +102,13 @@ def index(request):
             elif user_guesses[0][1] == 1:
                 messages.warning(request, 'Слово уже отгадано')
 
-            elif get_indexes(user_guesses)[0] == 2:
-                for i in range(3, 50000):
+            elif user_guesses[0][1] == 2:
+                for i in range(3, len(similarities)):
                     if i in get_indexes(user_guesses):
                         continue
 
                     placed = False
-                    for pair in similarity_matrix[secret_word]:
+                    for pair in similarities:
                         if pair[1] == i:
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
@@ -123,7 +121,7 @@ def index(request):
                 top_guess = get_indexes(user_guesses)[0]
                 need_to_place = ceil(top_guess / 2)
 
-                for pair in similarity_matrix[secret_word]:
+                for pair in similarities:
                     if pair[1] == need_to_place:
                         user_guesses.append(pair)
                         user_guesses = sorted(user_guesses, key=lambda x: x[1])
@@ -131,7 +129,7 @@ def index(request):
 
         elif 'show_top_100_closest' in request.POST:
 
-            top_100 = similarity_matrix[secret_word][:100]
+            top_100 = similarities[:100]
             local_context = {'top_100': top_100}
 
             return render(request, 'game/top_100.html', local_context)
