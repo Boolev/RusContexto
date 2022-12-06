@@ -72,7 +72,6 @@ def index(request):
                             break
                         else:
                             if pair[1] == 1:
-                                messages.warning(request, 'Вы отгадали слово. Можете продолжать эксперименты')
                                 is_victory = True
                             context['pair_for_asked'] = pair
                             user_guesses.append(pair)
