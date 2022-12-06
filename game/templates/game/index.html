@@ -38,7 +38,7 @@
 
                     <form method="post">
                         {% csrf_token %}
-                        <input type="text" name="input_word" placeholder="Введите слово">
+                        <input type="text" name="input_word" id="input_word" placeholder="Введите слово" autofocus>
                         <input type="submit" name="check_word_button" value="Проверить">
                     </form>
 
@@ -99,4 +99,9 @@
             </div>
         </div>
     </body>
+    <script>
+        window.onload = function() {
+            var input = document.getElementById("input_word").focus();
+        }
+    </script>
 </html>
