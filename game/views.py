@@ -2,18 +2,16 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
 import pickle
-from random import sample
+from random import choice
 from math import ceil
-from pymorphy2 import MorphAnalyzer
+from .utils import morph
 from .utils import get_sorted_similarities
 from .utils import stop_words
 from .utils import words4guess
 from .utils import all_words
 
 
-morph = MorphAnalyzer()
-
-secret_word = sample(words4guess, 1)[0]
+secret_word = choice(words4guess)
 user_guesses = []
 similarities = get_sorted_similarities(secret_word)
 is_victory = False
@@ -25,7 +23,7 @@ def reinitialize_game():
     global similarities
     global is_victory
 
-    secret_word = sample(words4guess, 1)[0]
+    secret_word = choice(words4guess)
     user_guesses = []
     similarities = get_sorted_similarities(secret_word)
     is_victory = False
@@ -33,10 +31,11 @@ def reinitialize_game():
     return
 
 
-def get_indexes(user_guesses_):
+def get_indexes():
+    global user_guesses
     indexes = []
 
-    for pair in user_guesses_:
+    for pair in user_guesses:
         indexes.append(pair[1])
 
     return indexes
@@ -103,7 +102,7 @@ def index(request):
 
             elif user_guesses[0][1] == 2:
                 for i in range(3, len(similarities)):
-                    if i in get_indexes(user_guesses):
+                    if i in get_indexes():
                         continue
 
                     placed = False
@@ -117,7 +116,7 @@ def index(request):
                     if placed:
                         break
             else:
-                top_guess = get_indexes(user_guesses)[0]
+                top_guess = get_indexes()[0]
                 need_to_place = ceil(top_guess / 2)
 
                 for pair in similarities:

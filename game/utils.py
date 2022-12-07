@@ -4,13 +4,14 @@ from navec import Navec
 path = 'game/game_files/navec_hudlit_v1_12B_500K_300d_100q.tar'
 navec = Navec.load(path)
 
+from pymorphy2 import MorphAnalyzer
+morph = MorphAnalyzer()
 
 import nltk
 from nltk.corpus import stopwords
 
 nltk.download("stopwords")
 stop_words = stopwords.words("russian")
-
 
 with open('game/game_files/words4guess.pickle', 'rb') as handle:
     words4guess = pickle.load(handle)
@@ -19,7 +20,6 @@ with open('game/game_files/cleaned_all_words.pickle', 'rb') as handle:
     all_words = pickle.load(handle)
 
 all_words = [word for word in all_words if word not in stop_words]
-
 
 def get_sorted_similarities(main_word):
 
