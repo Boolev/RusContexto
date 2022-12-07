@@ -15,6 +15,7 @@ secret_word = choice(words4guess)
 user_guesses = []
 similarities = get_sorted_similarities(secret_word)
 is_victory = False
+is_revealed = False
 
 
 def reinitialize_game():
@@ -22,11 +23,13 @@ def reinitialize_game():
     global secret_word
     global similarities
     global is_victory
+    global is_revealed
 
     secret_word = choice(words4guess)
     user_guesses = []
     similarities = get_sorted_similarities(secret_word)
     is_victory = False
+    is_revealed = False
 
     return
 
@@ -47,6 +50,7 @@ def index(request):
     global secret_word
     global similarities
     global is_victory
+    global is_revealed
 
     context = {}
 
@@ -72,6 +76,7 @@ def index(request):
                         else:
                             if pair[1] == 1:
                                 is_victory = True
+                                is_revealed = True
                             context['pair_for_asked'] = pair
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
@@ -84,7 +89,7 @@ def index(request):
 
             user_guesses.append(similarities[0])
             user_guesses = sorted(user_guesses, key=lambda x: x[1])
-            is_victory = True
+            is_revealed = True
 
             context['secret_word'] = secret_word
 
@@ -138,5 +143,6 @@ def index(request):
 
     context['user_guesses'] = user_guesses
     context['is_victory'] = is_victory
+    context['is_revealed'] = is_revealed
 
     return render(request, 'game/index.html', context)

@@ -61,7 +61,7 @@
                     </form>
 
 
-                    {% if is_victory %}
+                    {% if is_revealed %}
                         <form method="post">
                             {% csrf_token %}
                             <input type="submit" name="show_top_100_closest" value="Показать ближайшие 100 слов">
