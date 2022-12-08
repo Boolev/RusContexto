@@ -87,11 +87,14 @@ def index(request):
 
         elif 'show_answer_button' in request.POST:
 
-            user_guesses.append(similarities[0])
-            user_guesses = sorted(user_guesses, key=lambda x: x[1])
-            is_revealed = True
+            if is_revealed:
+                messages.warning(request, 'Секретное слово уже известно')
+            else:
+                user_guesses.append(similarities[0])
+                user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                is_revealed = True
 
-            context['secret_word'] = secret_word
+                context['secret_word'] = secret_word
 
         elif 'start_new_game_button' in request.POST:
 
