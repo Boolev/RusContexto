@@ -11,12 +11,11 @@
             .col-4 {
                 min-width: 450px;
                 font-size: 115%;
-
                 margin-top: 2vh;
                 background-color: #78A2B7;
                 color: white;
                 border-radius: 10px;
-                box-shadow: 7px 7px 10px grey;
+                box-shadow: 4px 4px 5px grey;
                 padding: 30px;
             }
 
@@ -37,6 +36,20 @@
                 height: 40px;
                 border-radius: 4px;
                 border: 1px grey solid;
+            }
+
+            .green {
+                color: lightgreen;
+            }
+
+            .red {
+                color: #005885;
+            }
+
+            #footer {
+                margin-top: 5px;
+                color: grey;
+                font-size: 100%;
             }
         </style>
     </head>
@@ -80,46 +93,68 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col">
-                            {% if is_revealed %}
+                    {% if is_revealed %}
+                        <div class="row">
+                            <div class="col">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input class="button" type="submit" name="show_top_100_closest" value="Показать ближайшие 100 слов">
                                 </form>
-                            {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
 
 
-                            {% if is_victory %}
-                                Вы отгадали слово. Можете продолжать эксперименты<br>
-                            {% endif %}
+                    {% if is_victory %}
+                        <div class="row text-center">
+                            <div class="col green">
+                                Вы отгадали слово. Можете продолжать эксперименты
+                            </div>
+                        </div>
+                    {% elif is_revealed %}
+                        <div class="row text-center">
+                            <div class="col green">
+                                Секретное слово - {{ secret_word }}
+                            </div>
+                        </div>
+                    {% endif %}
 
 
+                    <div class="row text-center" id="info_part">
+                        <div class="col">
                             {% if messages %}
                                 {% for message in messages %}
-                                    {{ message }}
+                                    <div class="red">{{ message }}</div>
                                 {% endfor %}
-                            {% elif secret_word %}
-                                Секретное слово - {{ secret_word }}
                             {% else %}
                                 {{ pair_for_asked }}
                             {% endif %}
+                        </div>
+                    </div>
 
-
+                    <div class="row">
+                        <div class="col">
                             {% if user_guesses %}
                                 <hr>
                             {% endif %}
-
 
                             {% for pair in user_guesses %}
                                 {{ pair }}<br>
                             {% endfor %}
                         </div>
                     </div>
+
+
                 </div>
 
                 <div class="col"></div>
 
+            </div>
+
+            <div class="row text-center" id="footer">
+                <div class="col">
+                    <pre>Idea: <a href="https://contexto.me/" target="_blank">Contexto</a>  |  Check out <a href="https://github.com/Daniel-tg/RusContexto" target="_blank">GitHub</a></pre>
+                </div>
             </div>
         </div>
     </body>

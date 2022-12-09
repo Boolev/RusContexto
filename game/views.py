@@ -94,8 +94,6 @@ def index(request):
                 user_guesses = sorted(user_guesses, key=lambda x: x[1])
                 is_revealed = True
 
-                context['secret_word'] = secret_word
-
         elif 'start_new_game_button' in request.POST:
 
             reinitialize_game()
@@ -106,7 +104,7 @@ def index(request):
                 messages.warning(request, 'Сделайте хотя бы одно предположение')
 
             elif user_guesses[0][1] == 1:
-                messages.warning(request, 'Слово уже отгадано')
+                messages.warning(request, 'Секретное слово уже известно')
 
             elif user_guesses[0][1] == 2:
                 for i in range(3, len(similarities)):
@@ -147,5 +145,7 @@ def index(request):
     context['user_guesses'] = user_guesses
     context['is_victory'] = is_victory
     context['is_revealed'] = is_revealed
+    if is_revealed:
+        context['secret_word'] = secret_word
 
     return render(request, 'game/index.html', context)
