@@ -14,6 +14,8 @@ from .utils import all_words
 secret_word = choice(words4guess)
 user_guesses = []
 similarities = get_sorted_similarities(secret_word)
+guess_counter = 0
+hint_counter = 0
 is_victory = False
 is_revealed = False
 
@@ -22,12 +24,16 @@ def reinitialize_game():
     global user_guesses
     global secret_word
     global similarities
+    global guess_counter
+    global hint_counter
     global is_victory
     global is_revealed
 
     secret_word = choice(words4guess)
     user_guesses = []
     similarities = get_sorted_similarities(secret_word)
+    guess_counter = 0
+    hint_counter = 0
     is_victory = False
     is_revealed = False
 
@@ -49,6 +55,8 @@ def index(request):
     global user_guesses
     global secret_word
     global similarities
+    global guess_counter
+    global hint_counter
     global is_victory
     global is_revealed
 
@@ -81,6 +89,7 @@ def index(request):
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
 
+                            guess_counter += 1
                             found = True
 
                 if not found:
@@ -118,6 +127,7 @@ def index(request):
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
                             placed = True
+                            hint_counter += 1
                             break
 
                     if placed:
@@ -130,6 +140,7 @@ def index(request):
                     if pair[1] == need_to_place:
                         user_guesses.append(pair)
                         user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                        hint_counter += 1
                         break
 
         elif 'show_top_100_closest' in request.POST:
@@ -146,7 +157,7 @@ def index(request):
     context['user_guesses'] = user_guesses
     context['is_victory'] = is_victory
     context['is_revealed'] = is_revealed
-    if is_revealed:
-        context['secret_word'] = secret_word
+    context['guess_counter'] = guess_counter
+    context['hint_counter'] = hint_counter
 
     return render(request, 'game/index.html', context)
