@@ -40,8 +40,8 @@
                 border-radius: 4px;
                 border: 1px grey solid;
                 font-weight: 600;
+                color: #444444;
             }
-
 
             input[type="text"]::-webkit-input-placeholder {
                 color: #a1a1a1;
@@ -50,8 +50,6 @@
             input[type="text"]::-moz-placeholder {
                 color: #a1a1a1;
             }
-
-
 
             .green {
                 color: lightgreen;
@@ -66,6 +64,11 @@
                 color: grey;
                 font-size: 100%;
             }
+
+            .user_guess {
+                border-radius: 4px;
+                border: 2px white solid;
+            }
         </style>
     </head>
     <body>
@@ -79,7 +82,7 @@
                         <div class="col">
                             <form method="post">
                                 {% csrf_token %}
-                                <input type="text" name="input_word" id="input_word" placeholder="Введите слово" autofocus>
+                                <input type="text" name="input_word" id="input_word" placeholder="Введите слово">
                                 <input class="button" type="submit" name="check_word_button" value="Проверить" style="display: none;">
                             </form>
                         </div>
@@ -154,7 +157,17 @@
                             {% endif %}
 
                             {% for pair in user_guesses %}
-                                {{ pair }}<br>
+                                <div class="row user_guess">
+                                    <div class="col">
+                                        {{ pair.0 }}
+                                    </div>
+
+                                    <div class="col"></div>
+
+                                    <div class="col text-end">
+                                        <div class="place">{{ pair.1 }}</div>
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
@@ -176,6 +189,22 @@
     <script>
         window.onload = function() {
             var input = document.getElementById("input_word").focus();
+        }
+
+        guesses = document.getElementsByClassName("user_guess");
+
+        for (let i = 0; i < guesses.length; i++) {
+            place = parseInt(guesses[i].lastElementChild.lastElementChild.innerHTML);
+
+            if (place > 300) {
+                opacity = 0;
+            }
+            else {
+                opacity = 0 + (301 - place) / 300
+            }
+
+            guesses[i].style.backgroundColor = 'rgba(' + 145 + ',' + 187 + ',' + 145 + ',' + opacity + ')';
+            console.log(guesses[i])
         }
     </script>
 </html>
