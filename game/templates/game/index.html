@@ -251,12 +251,12 @@
         for (let i = 0; i < guesses.length; i++) {
             place = parseInt(guesses[i].lastElementChild.lastElementChild.innerHTML);
 
-            if (place == 1) {
-                guesses[i].style.border = "4px solid lightgreen";
-            }
-
             if (place == parseInt("{{ pair_for_asked.1 }}")) {
                 guesses[i].style.border = "3px solid white";
+            }
+
+            if (place == 1) {
+                guesses[i].style.border = "4px solid lightgreen";
             }
 
             if (place > 500) {
