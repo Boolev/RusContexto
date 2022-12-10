@@ -80,6 +80,7 @@ def index(request):
                             context['pair_for_asked'] = pair
                             user_guesses.append(pair)
                             user_guesses = sorted(user_guesses, key=lambda x: x[1])
+
                             found = True
 
                 if not found:

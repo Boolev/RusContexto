@@ -81,6 +81,10 @@
             .display_word {
                 padding-left: 3px;
             }
+
+            .place {
+                padding-right: 3px;
+            }
         </style>
     </head>
     <body>
@@ -218,15 +222,22 @@
         for (let i = 0; i < guesses.length; i++) {
             place = parseInt(guesses[i].lastElementChild.lastElementChild.innerHTML);
 
-            if (place > 300) {
+            if (place == 1) {
+                guesses[i].style.border = "4px solid lightgreen";
+            }
+
+            if (place == parseInt("{{ pair_for_asked.1 }}")) {
+                guesses[i].style.border = "2px solid white";
+            }
+
+            if (place > 500) {
                 opacity = 0;
             }
             else {
-                opacity = 0 + (301 - place) / 300
+                opacity = 0 + (501 - place) / 500
             }
 
             guesses[i].style.backgroundColor = 'rgba(' + 145 + ',' + 187 + ',' + 145 + ',' + opacity + ')';
-            console.log(guesses[i])
         }
     </script>
 </html>
