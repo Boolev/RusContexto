@@ -145,12 +145,6 @@
                                 Вы отгадали слово!<br>Можете продолжать эксперименты
                             </div>
                         </div>
-                    {% elif is_revealed %}
-                        <div class="row text-center">
-                            <div class="col green">
-                                Секретное слово - {{ secret_word }}
-                            </div>
-                        </div>
                     {% endif %}
 
 
@@ -227,7 +221,7 @@
             }
 
             if (place == parseInt("{{ pair_for_asked.1 }}")) {
-                guesses[i].style.border = "2px solid white";
+                guesses[i].style.border = "3px solid white";
             }
 
             if (place > 500) {
