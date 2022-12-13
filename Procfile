@@ -1,0 +1,1 @@
+web: gunicorn RusContexto.wsgi --log-file -
