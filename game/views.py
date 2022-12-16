@@ -78,7 +78,7 @@ def index(request):
                 for pair in similarities:
                     if lemmatized in pair:
                         if pair in user_guesses:
-                            messages.warning(request, f'Рейтинг слова {lemmatized} уже известен')
+                            messages.warning(request, f'Рейтинг слова "{lemmatized}" уже известен')
                             found = True
                             break
                         else:
