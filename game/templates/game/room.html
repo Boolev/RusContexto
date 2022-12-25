@@ -59,7 +59,7 @@
                 color: lightgreen;
             }
 
-            .red {
+            .message_color {
                 color: #005885;
             }
 
@@ -178,7 +178,7 @@
                         <div class="col">
                             {% if messages %}
                                 {% for message in messages %}
-                                    <div class="red">{{ message }}</div>
+                                    <div class="message_color">{{ message }}</div>
                                 {% endfor %}
                             {% elif not all_guesses %}
                                 <div class="row text-start rules">

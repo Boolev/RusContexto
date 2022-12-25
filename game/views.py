@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.http import Http404
 import pickle
 from random import choice
 from math import ceil
@@ -11,17 +12,7 @@ from .utils import stop_words
 from .utils import words4guess
 from .utils import all_words
 from .utils import array_to_json, json_to_array
-
-
-def get_indexes():
-
-    global user_guesses
-    indexes = []
-
-    for pair in user_guesses:
-        indexes.append(pair[1])
-
-    return indexes
+from .utils import get_indexes
 
 
 def render_room(request, room_id):
@@ -79,7 +70,20 @@ def render_room(request, room_id):
 
         elif 'start_new_game_button' in request.POST:
 
-            reinitialize_game()
+            new_secret_word = choice(words4guess)
+            new_similarities = get_sorted_similarities(new_secret_word)
+
+            room.secret_word = new_secret_word
+            room.all_guesses = array_to_json([])
+            room.similarities = array_to_json(new_similarities)
+            room.guess_counter = 0
+            room.hint_counter = 0
+            room.is_victory = False
+            room.is_revealed = False
+
+            room.save()
+
+            return render(request, 'game/room.html', context)
 
         elif 'give_hint_button' in request.POST:
 
@@ -91,7 +95,7 @@ def render_room(request, room_id):
 
             elif users_guesses[0][1] == 2:
                 for i in range(3, len(similarities)):
-                    if i in get_indexes():
+                    if i in get_indexes(users_guesses):
                         continue
 
                     placed = False
@@ -106,7 +110,7 @@ def render_room(request, room_id):
                     if placed:
                         break
             else:
-                top_guess = get_indexes()[0]
+                top_guess = get_indexes(users_guesses)[0]
                 need_to_place = ceil(top_guess / 2)
 
                 for pair in similarities:
@@ -129,18 +133,25 @@ def render_room(request, room_id):
 
     context['all_guesses'] = users_guesses
     room.all_guesses = array_to_json(users_guesses)
+    room.save()
 
     return render(request, 'game/room.html', context)
 
 
 def index(request):
 
-    all_rooms = Room.objects.order_by('-creation_date')
-    context = {'all_rooms': all_rooms}
+    team_rooms = Room.objects.filter(created_for_teams=True)
+    context = {'team_rooms': team_rooms}
 
     if request.method == 'POST':
 
+        room_count = len(Room.objects.all())
+
         if 'quick_start_button' in request.POST:
+
+            if room_count >= 10:
+                messages.warning(request, 'Достигнут лимит количества комнат')
+                return render(request, 'game/index.html', context)
 
             secret_word = choice(words4guess)
             all_guesses = array_to_json([])
@@ -158,6 +169,10 @@ def index(request):
             return redirect('/game/room/' + str(new_room.pk) + '/')
 
         elif 'multiplayer_game_button' in request.POST:
+
+            if room_count >= 10:
+                messages.warning(request, 'Достигнут лимит количества комнат')
+                return render(request, 'game/index.html', context)
 
             return redirect('/game/room_registration/')
 
@@ -177,6 +192,7 @@ def room_registration(request):
             return redirect('index')
 
         elif 'create_room' in request.POST:
+
             room_name = request.POST.get('room_name')
             secret_word = choice(words4guess)
             all_guesses = array_to_json([])
@@ -189,6 +205,7 @@ def room_registration(request):
                 secret_word=secret_word,
                 all_guesses=all_guesses,
                 similarities=similarities,
+                created_for_teams=True,
             )
             new_room.save()
 

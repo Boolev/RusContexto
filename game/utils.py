@@ -46,3 +46,13 @@ def array_to_json(array_obj):
 
 def json_to_array(json_str):
     return json.loads(json_str)
+
+
+def get_indexes(guesses):
+
+    indexes = []
+
+    for pair in guesses:
+        indexes.append(pair[1])
+
+    return indexes

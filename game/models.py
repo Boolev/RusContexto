@@ -8,6 +8,8 @@ class Room(models.Model):
 
     password = models.CharField(max_length=30, default='')
 
+    created_for_teams = models.BooleanField(default=False)
+
     secret_word = models.CharField(max_length=50, default='')
 
     all_guesses = models.TextField(default='')
