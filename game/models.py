@@ -1,3 +1,28 @@
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
+
+class Room(models.Model):
+
+    name = models.CharField(max_length=30, default='Комната без названия')
+
+    password = models.CharField(max_length=30, default='')
+
+    secret_word = models.CharField(max_length=50, default='')
+
+    all_guesses = models.TextField(default='')
+
+    similarities = models.TextField(default='')
+
+    guess_counter = models.IntegerField(default=0)
+
+    hint_counter = models.IntegerField(default=0)
+
+    is_victory = models.BooleanField(default=False)
+
+    is_revealed = models.BooleanField(default=False)
+
+    creation_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name

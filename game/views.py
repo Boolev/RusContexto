@@ -4,43 +4,17 @@ from django.shortcuts import redirect
 import pickle
 from random import choice
 from math import ceil
+from .models import Room
 from .utils import morph
 from .utils import get_sorted_similarities
 from .utils import stop_words
 from .utils import words4guess
 from .utils import all_words
-
-
-secret_word = choice(words4guess)
-user_guesses = []
-similarities = get_sorted_similarities(secret_word)
-guess_counter = 0
-hint_counter = 0
-is_victory = False
-is_revealed = False
-
-
-def reinitialize_game():
-    global user_guesses
-    global secret_word
-    global similarities
-    global guess_counter
-    global hint_counter
-    global is_victory
-    global is_revealed
-
-    secret_word = choice(words4guess)
-    user_guesses = []
-    similarities = get_sorted_similarities(secret_word)
-    guess_counter = 0
-    hint_counter = 0
-    is_victory = False
-    is_revealed = False
-
-    return
+from .utils import array_to_json, json_to_array
 
 
 def get_indexes():
+
     global user_guesses
     indexes = []
 
@@ -50,17 +24,16 @@ def get_indexes():
     return indexes
 
 
-def index(request):
+def render_room(request, room_id):
 
-    global user_guesses
-    global secret_word
-    global similarities
-    global guess_counter
-    global hint_counter
-    global is_victory
-    global is_revealed
+    try:
+        room = Room.objects.get(pk=room_id)
+    except Room.DoesNotExist:
+        raise Http404("Такой комнаты не существует")
 
-    context = {}
+    context = {'room': room}
+    similarities = json_to_array(room.similarities)
+    users_guesses = json_to_array(room.all_guesses)
 
     if request.method == 'POST':
 
@@ -77,19 +50,19 @@ def index(request):
                 found = False
                 for pair in similarities:
                     if lemmatized in pair:
-                        if pair in user_guesses:
+                        if pair in users_guesses:
                             messages.warning(request, f'Рейтинг слова "{lemmatized}" уже известен')
                             found = True
                             break
                         else:
                             if pair[1] == 1:
-                                is_victory = True
-                                is_revealed = True
+                                room.is_victory = True
+                                room.is_revealed = True
                             context['pair_for_asked'] = pair
-                            user_guesses.append(pair)
-                            user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                            users_guesses.append(pair)
+                            users_guesses = sorted(users_guesses, key=lambda x: x[1])
 
-                            guess_counter += 1
+                            room.guess_counter += 1
                             found = True
 
                 if not found:
@@ -97,12 +70,12 @@ def index(request):
 
         elif 'show_answer_button' in request.POST:
 
-            if is_revealed:
+            if room.is_revealed:
                 messages.warning(request, 'Секретное слово уже известно')
             else:
-                user_guesses.append(similarities[0])
-                user_guesses = sorted(user_guesses, key=lambda x: x[1])
-                is_revealed = True
+                users_guesses.append(similarities[0])
+                users_guesses = sorted(users_guesses, key=lambda x: x[1])
+                room.is_revealed = True
 
         elif 'start_new_game_button' in request.POST:
 
@@ -110,13 +83,13 @@ def index(request):
 
         elif 'give_hint_button' in request.POST:
 
-            if not user_guesses:
+            if not users_guesses:
                 messages.warning(request, 'Сделайте хотя бы одно предположение')
 
-            elif user_guesses[0][1] == 1:
+            elif users_guesses[0][1] == 1:
                 messages.warning(request, 'Секретное слово уже известно')
 
-            elif user_guesses[0][1] == 2:
+            elif users_guesses[0][1] == 2:
                 for i in range(3, len(similarities)):
                     if i in get_indexes():
                         continue
@@ -124,10 +97,10 @@ def index(request):
                     placed = False
                     for pair in similarities:
                         if pair[1] == i:
-                            user_guesses.append(pair)
-                            user_guesses = sorted(user_guesses, key=lambda x: x[1])
+                            users_guesses.append(pair)
+                            users_guesses = sorted(users_guesses, key=lambda x: x[1])
                             placed = True
-                            hint_counter += 1
+                            room.hint_counter += 1
                             break
 
                     if placed:
@@ -138,9 +111,9 @@ def index(request):
 
                 for pair in similarities:
                     if pair[1] == need_to_place:
-                        user_guesses.append(pair)
-                        user_guesses = sorted(user_guesses, key=lambda x: x[1])
-                        hint_counter += 1
+                        users_guesses.append(pair)
+                        users_guesses = sorted(users_guesses, key=lambda x: x[1])
+                        room.hint_counter += 1
                         break
 
         elif 'show_top_100_closest' in request.POST:
@@ -154,10 +127,71 @@ def index(request):
 
             redirect('index')
 
-    context['user_guesses'] = user_guesses
-    context['is_victory'] = is_victory
-    context['is_revealed'] = is_revealed
-    context['guess_counter'] = guess_counter
-    context['hint_counter'] = hint_counter
+    context['all_guesses'] = users_guesses
+    room.all_guesses = array_to_json(users_guesses)
+
+    return render(request, 'game/room.html', context)
+
+
+def index(request):
+
+    all_rooms = Room.objects.order_by('-creation_date')
+    context = {'all_rooms': all_rooms}
+
+    if request.method == 'POST':
+
+        if 'quick_start_button' in request.POST:
+
+            secret_word = choice(words4guess)
+            all_guesses = array_to_json([])
+
+            similarities_ = get_sorted_similarities(secret_word)
+            similarities = array_to_json(similarities_)
+
+            new_room = Room(
+                secret_word=secret_word,
+                all_guesses=all_guesses,
+                similarities=similarities,
+            )
+            new_room.save()
+
+            return redirect('/game/room/' + str(new_room.pk) + '/')
+
+        elif 'multiplayer_game_button' in request.POST:
+
+            return redirect('/game/room_registration/')
+
+        elif 'join_room' in request.POST:
+
+            room_pk = request.POST.get('room_pk')
+            return redirect('/game/room/' + room_pk + '/')
 
     return render(request, 'game/index.html', context)
+
+
+def room_registration(request):
+
+    if request.method == 'POST':
+
+        if 'back_to_index' in request.POST:
+            return redirect('index')
+
+        elif 'create_room' in request.POST:
+            room_name = request.POST.get('room_name')
+            secret_word = choice(words4guess)
+            all_guesses = array_to_json([])
+
+            similarities_ = get_sorted_similarities(secret_word)
+            similarities = array_to_json(similarities_)
+
+            new_room = Room(
+                name=room_name,
+                secret_word=secret_word,
+                all_guesses=all_guesses,
+                similarities=similarities,
+            )
+            new_room.save()
+
+            return redirect('/game/room/' + str(new_room.pk) + '/')
+
+    return render(request, 'game/room_registration.html', {})
