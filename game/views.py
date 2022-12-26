@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 import pickle
 from random import choice
 from math import ceil
@@ -129,7 +129,11 @@ def render_room(request, room_id):
 
         elif 'get_to_home_button' in request.POST:
 
-            redirect('index')
+            return redirect('/game/room/' + str(room.pk) + '/')
+
+        elif 'back_to_main_page_button' in request.POST:
+
+            return redirect('/game/')
 
     context['all_guesses'] = users_guesses
     room.all_guesses = array_to_json(users_guesses)
@@ -212,3 +216,31 @@ def room_registration(request):
             return redirect('/game/room/' + str(new_room.pk) + '/')
 
     return render(request, 'game/room_registration.html', {})
+
+
+def delete_all_rooms(request):
+    rooms = Room.objects.all()
+    for room in rooms:
+        room.delete()
+
+    return HttpResponse('All rooms deleted')
+
+
+def show_room_info(request, room_id):
+
+    try:
+        room = Room.objects.get(pk=room_id)
+    except Room.DoesNotExist:
+        raise Http404("Такой комнаты не существует")
+
+    info_string = ''
+
+    info_string += 'Название: ' + room.name + '<br><br>'
+    info_string += 'Пароль: ' + room.password + '<br><br>'
+    info_string += 'Секретное слово: ' + room.secret_word + '<br><br>'
+    info_string += 'Счетчик попыток: ' + str(room.guess_counter) + '<br><br>'
+    info_string += 'Счетчик подсказок: ' + str(room.hint_counter) + '<br><br>'
+    info_string += 'Победа: ' + str(room.is_victory) + '<br><br>'
+    info_string += 'Слово открыто: ' + str(room.is_revealed)
+
+    return HttpResponse(info_string)

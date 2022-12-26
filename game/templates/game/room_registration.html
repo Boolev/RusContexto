@@ -73,12 +73,11 @@
                             </form>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" style="margin-top: 30px;">
                         <div class="col">
                             <form method="post">
                                 {% csrf_token %}
-                                <p>Введите название комнаты:</p>
-                                <input class="creation_input" type="text" name="room_name">
+                                <input class="creation_input" type="text" name="room_name" style="margin-bottom: 5px;" placeholder="Введите название комнаты">
                                 <input class="button" type="submit" name="create_room" value="Создать комнату">
                             </form>
                         </div>

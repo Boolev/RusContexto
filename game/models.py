@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Room(models.Model):
 
-    name = models.CharField(max_length=30, default='Комната без названия')
+    name = models.CharField(max_length=30, default='Быстрая игра')
 
     password = models.CharField(max_length=30, default='')
 
@@ -23,8 +23,6 @@ class Room(models.Model):
     is_victory = models.BooleanField(default=False)
 
     is_revealed = models.BooleanField(default=False)
-
-    creation_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.name

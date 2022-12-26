@@ -16,7 +16,7 @@
                 color: white;
                 border-radius: 10px;
                 box-shadow: 4px 4px 5px grey;
-                padding: 30px;
+                padding: 15px 30px 30px 30px;
             }
 
             .col {
@@ -109,7 +109,11 @@
                 <div class="col"></div>
 
                 <div class="col-4">
-                    {{ room.name }}
+                    <div class="row">
+                        <div class="col text-center" style="font-size: 140%; margin-bottom: 20px; margin-top: 0px;">
+                            {{ room.name }}
+                        </div>
+                    </div>
                     <div class="row" id="counter">
                         <div class="col text-start">
                             Счетчик попыток: {{ room.guess_counter }}
@@ -120,7 +124,7 @@
                         <hr style="margin-bottom: 4px;">
                     </div>
 
-                    <div class="row">
+                    <div class="row" style="margin-bottom: 10px;">
                         <div class="col">
                             <form method="post">
                                 {% csrf_token %}
@@ -144,11 +148,20 @@
                                 <input class="button" type="submit" name="show_answer_button" value="Сдаться">
                             </form>
                         </div>
+                    </div>
 
+                    <div class="row">
                         <div class="col">
                             <form method="post">
                                 {% csrf_token %}
                                 <input class="button" type="submit" name="start_new_game_button" value="Новая игра">
+                            </form>
+                        </div>
+
+                        <div class="col">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input class="button" type="submit" name="back_to_main_page_button" value="Вернуться назад">
                             </form>
                         </div>
                     </div>
