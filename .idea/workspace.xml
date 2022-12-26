@@ -21,16 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="3cafb039-714b-4c56-ab7f-a61d9c437319" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/migrations/0002_auto_20221225_2354.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/migrations/0003_room_created_for_teams.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/templates/game/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/templates/game/room.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/room.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/templates/game/room_registration.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/room_registration.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RusContexto/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/RusContexto/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
