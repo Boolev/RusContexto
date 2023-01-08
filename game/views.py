@@ -43,6 +43,7 @@ def render_room(request, room_id):
                     if lemmatized in pair:
                         if pair in users_guesses:
                             messages.warning(request, f'Рейтинг слова "{lemmatized}" уже известен')
+                            context['highlight_already_known'] = pair[1]
                             found = True
                             break
                         else:

@@ -273,6 +273,12 @@
                 guesses[i].style.border = "4px solid lightgreen";
             }
 
+            {% if highlight_already_known %}
+            if (place == parseInt("{{ highlight_already_known }}")) {
+                guesses[i].style.border = "3px solid white";
+            }
+            {% endif %}
+
             if (place > 500) {
                 opacity = 0;
             }
