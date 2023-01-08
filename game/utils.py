@@ -1,15 +1,15 @@
-import pickle
 from navec import Navec
+from pymorphy2 import MorphAnalyzer
+from nltk.corpus import stopwords
+import pickle
 import json
+import nltk
+
 
 path = 'game/game_files/navec_hudlit_v1_12B_500K_300d_100q.tar'
 navec = Navec.load(path)
 
-from pymorphy2 import MorphAnalyzer
 morph = MorphAnalyzer()
-
-import nltk
-from nltk.corpus import stopwords
 
 nltk.download("stopwords")
 stop_words = stopwords.words("russian")
@@ -49,9 +49,7 @@ def json_to_array(json_str):
 
 
 def get_indexes(guesses):
-
     indexes = []
-
     for pair in guesses:
         indexes.append(pair[1])
 

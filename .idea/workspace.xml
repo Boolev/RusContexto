@@ -20,8 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3cafb039-714b-4c56-ab7f-a61d9c437319" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/templates/game/room.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/room.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

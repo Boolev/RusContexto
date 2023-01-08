@@ -2,17 +2,11 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.http import Http404, HttpResponse
-import pickle
+from .utils import *
+from .models import Room
 from random import choice
 from math import ceil
-from .models import Room
-from .utils import morph
-from .utils import get_sorted_similarities
-from .utils import stop_words
-from .utils import words4guess
-from .utils import all_words
-from .utils import array_to_json, json_to_array
-from .utils import get_indexes
+import pickle
 
 
 def render_room(request, room_id):
