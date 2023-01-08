@@ -14,7 +14,7 @@ from nltk.corpus import stopwords
 nltk.download("stopwords")
 stop_words = stopwords.words("russian")
 
-with open('game/game_files/words4guess.pickle', 'rb') as handle:
+with open('game/game_files/words_4_guess.pickle', 'rb') as handle:
     words4guess = pickle.load(handle)
 
 with open('game/game_files/cleaned_all_words.pickle', 'rb') as handle:

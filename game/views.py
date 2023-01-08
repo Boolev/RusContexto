@@ -30,7 +30,7 @@ def render_room(request, room_id):
 
         if 'check_word_button' in request.POST:
 
-            input_word = request.POST.get('input_word')
+            input_word = request.POST.get('input_word').strip()
 
             if input_word in stop_words:
                 messages.warning(request, 'В этом слове мало смысла')
